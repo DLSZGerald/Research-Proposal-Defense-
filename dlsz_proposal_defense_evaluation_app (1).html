@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DLSZ Proposal Defense Evaluation Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .accent-green {
+      color: #006A33;
+    }
+    .bg-green-dlsz {
+      background-color: #006A33;
+    }
+    .bg-green-dlsz-dark {
+      background-color: #004D25;
+    }
+    .border-green-dlsz {
+      border-color: #006A33;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #006A33;
+      border-radius: 4px;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-black min-h-screen flex flex-col antialiased">
+
+  <!-- TOP BRANDING BAR -->
+  <header class="bg-black text-white text-xs py-2.5 px-4 flex justify-between items-center no-print border-b border-neutral-800">
+    <div class="flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+      <span class="font-bold tracking-wider uppercase text-[10px] text-gray-200">DLSZ Br. Rafael Donato FSC Night High School</span>
+    </div>
+    <div class="text-gray-300 text-[10px] font-bold">AY 2026-2027 • TERM 1 PROPOSAL DEFENSE</div>
+  </header>
+
+  <!-- MAIN NAVIGATION HEADER -->
+  <nav class="bg-green-dlsz text-white shadow-lg no-print border-b-4 border-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20">
+        <div class="flex items-center">
+          <div class="bg-white p-2 rounded-lg mr-3 shadow-md flex items-center justify-center border-2 border-black">
+            <svg class="w-9 h-9 text-green-dlsz" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="font-black text-lg sm:text-xl tracking-tight uppercase">Proposal Defense Rubric</h1>
+            <p class="text-[12px] text-yellow-300 font-bold uppercase tracking-wider">Research Adviser: Gerald Gamboa</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+          <button id="btn-show-form" onclick="switchTab('form')" class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-black text-white hover:bg-neutral-900 shadow-md transition-all duration-200 border border-neutral-700 flex items-center gap-1.5">
+            <i data-lucide="file-text" class="w-4 h-4 text-green-400"></i>
+            <span>Evaluation Form</span>
+          </button>
+          <button id="btn-show-records" onclick="switchTab('records')" class="px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-white hover:bg-green-dlsz-dark transition-all duration-200 flex items-center gap-1.5 relative border border-white/20">
+            <i data-lucide="database" class="w-4 h-4"></i>
+            <span>Local Database</span>
+            <span id="record-count-badge" class="absolute -top-1.5 -right-1.5 bg-black text-yellow-300 text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-black border-2 border-white hidden">0</span>
+          </button>
+          <button id="btn-show-setup" onclick="switchTab('setup')" class="p-2.5 rounded-lg text-white hover:bg-green-dlsz-dark transition-all duration-200 border border-white/20" title="Google Sheets Setup">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BODY CONTENT AREA -->
+  <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 no-print">
+    
+    <!-- NOTIFICATION SYSTEM -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full"></div>
+
+    <!-- TAB 1: EVALUATION FORM -->
+    <section id="tab-form" class="space-y-6">
+      
+      <!-- Welcome Banner Card -->
+      <div class="bg-black text-white rounded-xl p-6 shadow-xl relative overflow-hidden border-l-8 border-green-dlsz">
+        <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-1/4 translate-x-1/6">
+          <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+        </div>
+        <div class="relative z-10">
+          <span class="bg-green-dlsz text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded border border-green-400">Panelist Interface</span>
+          <h2 class="text-2xl sm:text-3xl font-black mt-3 tracking-tight uppercase">Record Evaluation & Scores</h2>
+          <p class="text-xs sm:text-sm text-neutral-300 mt-2 max-w-2xl leading-relaxed">
+            Rate each criterion from <strong>1 (Beginning) to 5 (Advanced)</strong>. All values will sync instantly to your Google Spreadsheet and email a beautifully formatted PDF receipt back to the panelist.
+          </p>
+        </div>
+      </div>
+
+      <!-- FORM BODY -->
+      <form id="evaluation-form" onsubmit="handleFormSubmission(event)" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        
+        <!-- Left Side: Group & Title Metadata (1 Column) -->
+        <div class="lg:col-span-1 space-y-6">
+          <div class="bg-white rounded-xl shadow-md border-2 border-black p-6 space-y-5">
+            <h3 class="font-black text-black text-sm tracking-wider uppercase border-b-2 border-black pb-2 flex items-center gap-2">
+              <i data-lucide="user-check" class="w-5 h-5 text-green-dlsz"></i>
+              Defense Context
+            </h3>
+            
+            <!-- Panelist Name -->
+            <div>
+              <label class="block text-xs font-black text-black uppercase mb-1.5">Panelist Name <span class="text-red-600">*</span></label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black font-bold">
+                  <i data-lucide="user" class="w-4 h-4 text-green-dlsz"></i>
+                </span>
+                <input type="text" id="panelist-name" required placeholder="Full Name" class="pl-9 w-full rounded-lg border-2 border-black py-2.5 text-sm font-bold text-black focus:outline-none focus:ring-2 focus:ring-green-dlsz transition">
+              </div>
+            </div>
+
+            <!-- Panelist Email -->
+            <div>
+              <label class="block text-xs font-black text-black uppercase mb-1.5">Email Address <span class="text-red-600">*</span></label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black font-bold">
+                  <i data-lucide="mail" class="w-4 h-4 text-green-dlsz"></i>
+                </span>
+                <input type="email" id="panelist-email" required placeholder="email@dlszobel.edu.ph" class="pl-9 w-full rounded-lg border-2 border-black py-2.5 text-sm font-bold text-black focus:outline-none focus:ring-2 focus:ring-green-dlsz transition">
+              </div>
+              <p class="text-[11px] text-neutral-700 font-bold mt-1.5">A complete scored receipt copy is sent to this address.</p>
+            </div>
+
+            <!-- Grade & Section (Dropdown) -->
+            <div>
+              <label class="block text-xs font-black text-black uppercase mb-1.5">Grade and Section <span class="text-red-600">*</span></label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black font-bold">
+                  <i data-lucide="graduation-cap" class="w-4 h-4 text-green-dlsz"></i>
+                </span>
+                <select id="grade-section" required class="pl-9 w-full rounded-lg border-2 border-black py-2.5 text-sm font-bold text-black bg-white focus:outline-none focus:ring-2 focus:ring-green-dlsz transition appearance-none">
+                  <option value="" disabled selected>Select Section</option>
+                  <option value="Grade 11 - Section A">Grade 11 - Section A</option>
+                  <option value="Grade 11 - Section B">Grade 11 - Section B</option>
+                  <option value="Grade 12 - Section A">Grade 12 - Section A</option>
+                  <option value="Grade 12 - Section B">Grade 12 - Section B</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Group Number (Dropdown) -->
+            <div>
+              <label class="block text-xs font-black text-black uppercase mb-1.5">Group Number <span class="text-red-600">*</span></label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black font-bold">
+                  <i data-lucide="users" class="w-4 h-4 text-green-dlsz"></i>
+                </span>
+                <select id="group-number" required class="pl-9 w-full rounded-lg border-2 border-black py-2.5 text-sm font-bold text-black bg-white focus:outline-none focus:ring-2 focus:ring-green-dlsz transition appearance-none">
+                  <option value="" disabled selected>Select Group</option>
+                  <option value="Group 1">Group 1</option>
+                  <option value="Group 2">Group 2</option>
+                  <option value="Group 3">Group 3</option>
+                  <option value="Group 4">Group 4</option>
+                  <option value="Group 5">Group 5</option>
+                  <option value="Group 6">Group 6</option>
+                  <option value="Group 7">Group 7</option>
+                  <option value="Group 8">Group 8</option>
+                  <option value="Group 9">Group 9</option>
+                  <option value="Group 10">Group 10</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Research Title -->
+            <div>
+              <label class="block text-xs font-black text-black uppercase mb-1.5">Research Title <span class="text-red-600">*</span></label>
+              <textarea id="research-title" required rows="3" placeholder="Enter full research proposal title..." class="w-full rounded-lg border-2 border-black p-2.5 text-sm font-bold text-black focus:outline-none focus:ring-2 focus:ring-green-dlsz transition resize-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Composite Summary Card -->
+          <div class="bg-black text-white rounded-xl shadow-lg p-6 space-y-4 relative overflow-hidden border-2 border-green-dlsz">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-green-dlsz opacity-20 rounded-full transform translate-x-1/3 -translate-y-1/3"></div>
+            <h4 class="font-black text-xs uppercase tracking-widest text-neutral-400">Calculated Composite</h4>
+            <div class="flex items-baseline gap-2">
+              <span id="composite-score-badge" class="text-6xl font-black text-white">0</span>
+              <span class="text-neutral-400 text-xl font-bold">/ 25</span>
+            </div>
+            
+            <div class="text-xs">
+              <span class="text-neutral-400 font-bold">Performance Standard:</span>
+              <p id="grade-verbal-interpretation" class="font-black text-sm text-yellow-300 mt-1 uppercase">Pending Evaluation inputs</p>
+            </div>
+            
+            <div class="pt-3 border-t border-neutral-800 space-y-2">
+              <div class="flex justify-between text-[11px] text-neutral-300 font-bold">
+                <span>Completed Rubric:</span>
+                <span id="rubric-progress">0/5 Filled</span>
+              </div>
+              <div class="w-full bg-neutral-800 rounded-full h-2 overflow-hidden">
+                <div id="rubric-progress-bar" class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side: Interactive Score cards (2 Columns) -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="space-y-5">
+            <h3 class="font-black text-black text-md tracking-wider uppercase flex items-center gap-2">
+              <i data-lucide="award" class="w-6 h-6 text-green-dlsz"></i>
+              Rubric Grading Matrix
+            </h3>
+            
+            <!-- Criterion 1 -->
+            <div class="bg-white rounded-xl shadow-md border-2 border-neutral-300 p-6 space-y-4 transition-all hover:border-black" id="card-crit-1">
+              <div class="flex justify-between items-start gap-4">
+                <div>
+                  <span class="text-[10px] uppercase font-black text-white bg-green-dlsz px-2.5 py-1 rounded">Criterion 1</span>
+                  <h4 class="font-black text-black text-lg mt-1.5">Understanding of the Research Topic</h4>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs text-neutral-500 font-bold uppercase">Weight</span>
+                  <p class="font-black text-xs text-black">5 Pts Max</p>
+                </div>
+              </div>
+              <p class="text-xs text-neutral-900 font-medium leading-relaxed">Demonstrated comprehensive understanding, logical explanation of the research problem, framework coherence, and significance.</p>
+              
+              <!-- Scale buttons -->
+              <div class="grid grid-cols-5 gap-2 pt-2">
+                <button type="button" onclick="setScore(1, 1)" class="btn-score-1 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">1</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Beg</span>
+                </button>
+                <button type="button" onclick="setScore(1, 2)" class="btn-score-1 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">2</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Dev</span>
+                </button>
+                <button type="button" onclick="setScore(1, 3)" class="btn-score-1 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">3</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Appr</span>
+                </button>
+                <button type="button" onclick="setScore(1, 4)" class="btn-score-1 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">4</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Prof</span>
+                </button>
+                <button type="button" onclick="setScore(1, 5)" class="btn-score-1 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">5</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Adv</span>
+                </button>
+              </div>
+              <input type="hidden" id="score-val-1" required name="understanding">
+              <!-- Descriptor Preview Box -->
+              <div id="desc-box-1" class="hidden text-xs bg-neutral-50 text-black rounded-lg p-3.5 border-l-4 border-green-dlsz leading-relaxed mt-3 font-semibold"></div>
+            </div>
+
+            <!-- Criterion 2 -->
+            <div class="bg-white rounded-xl shadow-md border-2 border-neutral-300 p-6 space-y-4 transition-all hover:border-black" id="card-crit-2">
+              <div class="flex justify-between items-start gap-4">
+                <div>
+                  <span class="text-[10px] uppercase font-black text-white bg-green-dlsz px-2.5 py-1 rounded">Criterion 2</span>
+                  <h4 class="font-black text-black text-lg mt-1.5">Presentation & Delivery</h4>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs text-neutral-500 font-bold uppercase">Weight</span>
+                  <p class="font-black text-xs text-black">5 Pts Max</p>
+                </div>
+              </div>
+              <p class="text-xs text-neutral-900 font-medium leading-relaxed">Evaluation of clear communications, physical and slide design coordination, professional speaking confidence, and visual transitions.</p>
+              
+              <!-- Scale buttons -->
+              <div class="grid grid-cols-5 gap-2 pt-2">
+                <button type="button" onclick="setScore(2, 1)" class="btn-score-2 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">1</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Beg</span>
+                </button>
+                <button type="button" onclick="setScore(2, 2)" class="btn-score-2 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">2</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Dev</span>
+                </button>
+                <button type="button" onclick="setScore(2, 3)" class="btn-score-2 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">3</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Appr</span>
+                </button>
+                <button type="button" onclick="setScore(2, 4)" class="btn-score-2 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">4</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Prof</span>
+                </button>
+                <button type="button" onclick="setScore(2, 5)" class="btn-score-2 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">5</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Adv</span>
+                </button>
+              </div>
+              <input type="hidden" id="score-val-2" required name="presentation">
+              <!-- Descriptor Preview Box -->
+              <div id="desc-box-2" class="hidden text-xs bg-neutral-50 text-black rounded-lg p-3.5 border-l-4 border-green-dlsz leading-relaxed mt-3 font-semibold"></div>
+            </div>
+
+            <!-- Criterion 3 -->
+            <div class="bg-white rounded-xl shadow-md border-2 border-neutral-300 p-6 space-y-4 transition-all hover:border-black" id="card-crit-3">
+              <div class="flex justify-between items-start gap-4">
+                <div>
+                  <span class="text-[10px] uppercase font-black text-white bg-green-dlsz px-2.5 py-1 rounded">Criterion 3</span>
+                  <h4 class="font-black text-black text-lg mt-1.5">Content Accuracy & Organization</h4>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs text-neutral-500 font-bold uppercase">Weight</span>
+                  <p class="font-black text-xs text-black">5 Pts Max</p>
+                </div>
+              </div>
+              <p class="text-xs text-neutral-900 font-medium leading-relaxed">Completeness of paper proposal drafts, academic formatting standards, formatting mechanics, and logical structure.</p>
+              
+              <!-- Scale buttons -->
+              <div class="grid grid-cols-5 gap-2 pt-2">
+                <button type="button" onclick="setScore(3, 1)" class="btn-score-3 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">1</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Beg</span>
+                </button>
+                <button type="button" onclick="setScore(3, 2)" class="btn-score-3 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">2</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Dev</span>
+                </button>
+                <button type="button" onclick="setScore(3, 3)" class="btn-score-3 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">3</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Appr</span>
+                </button>
+                <button type="button" onclick="setScore(3, 4)" class="btn-score-3 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">4</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Prof</span>
+                </button>
+                <button type="button" onclick="setScore(3, 5)" class="btn-score-3 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">5</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Adv</span>
+                </button>
+              </div>
+              <input type="hidden" id="score-val-3" required name="content">
+              <!-- Descriptor Preview Box -->
+              <div id="desc-box-3" class="hidden text-xs bg-neutral-50 text-black rounded-lg p-3.5 border-l-4 border-green-dlsz leading-relaxed mt-3 font-semibold"></div>
+            </div>
+
+            <!-- Criterion 4 -->
+            <div class="bg-white rounded-xl shadow-md border-2 border-neutral-300 p-6 space-y-4 transition-all hover:border-black" id="card-crit-4">
+              <div class="flex justify-between items-start gap-4">
+                <div>
+                  <span class="text-[10px] uppercase font-black text-white bg-green-dlsz px-2.5 py-1 rounded">Criterion 4</span>
+                  <h4 class="font-black text-black text-lg mt-1.5">Use of Evidence and Research Support</h4>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs text-neutral-500 font-bold uppercase">Weight</span>
+                  <p class="font-black text-xs text-black">5 Pts Max</p>
+                </div>
+              </div>
+              <p class="text-xs text-neutral-900 font-medium leading-relaxed">Integration of citations, theories, related studies, and literature validations used to support major claims.</p>
+              
+              <!-- Scale buttons -->
+              <div class="grid grid-cols-5 gap-2 pt-2">
+                <button type="button" onclick="setScore(4, 1)" class="btn-score-4 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">1</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Beg</span>
+                </button>
+                <button type="button" onclick="setScore(4, 2)" class="btn-score-4 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">2</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Dev</span>
+                </button>
+                <button type="button" onclick="setScore(4, 3)" class="btn-score-4 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">3</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Appr</span>
+                </button>
+                <button type="button" onclick="setScore(4, 4)" class="btn-score-4 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">4</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Prof</span>
+                </button>
+                <button type="button" onclick="setScore(4, 5)" class="btn-score-4 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">5</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Adv</span>
+                </button>
+              </div>
+              <input type="hidden" id="score-val-4" required name="evidence">
+              <!-- Descriptor Preview Box -->
+              <div id="desc-box-4" class="hidden text-xs bg-neutral-50 text-black rounded-lg p-3.5 border-l-4 border-green-dlsz leading-relaxed mt-3 font-semibold"></div>
+            </div>
+
+            <!-- Criterion 5 -->
+            <div class="bg-white rounded-xl shadow-md border-2 border-neutral-300 p-6 space-y-4 transition-all hover:border-black" id="card-crit-5">
+              <div class="flex justify-between items-start gap-4">
+                <div>
+                  <span class="text-[10px] uppercase font-black text-white bg-green-dlsz px-2.5 py-1 rounded">Criterion 5</span>
+                  <h4 class="font-black text-black text-lg mt-1.5">Ability to Respond to Questions</h4>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs text-neutral-500 font-bold uppercase">Weight</span>
+                  <p class="font-black text-xs text-black">5 Pts Max</p>
+                </div>
+              </div>
+              <p class="text-xs text-neutral-900 font-medium leading-relaxed">Scientific justification, confidence, collaborative responsiveness, and accuracy during panel Q&A defense.</p>
+              
+              <!-- Scale buttons -->
+              <div class="grid grid-cols-5 gap-2 pt-2">
+                <button type="button" onclick="setScore(5, 1)" class="btn-score-5 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">1</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Beg</span>
+                </button>
+                <button type="button" onclick="setScore(5, 2)" class="btn-score-5 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">2</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Dev</span>
+                </button>
+                <button type="button" onclick="setScore(5, 3)" class="btn-score-5 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">3</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Appr</span>
+                </button>
+                <button type="button" onclick="setScore(5, 4)" class="btn-score-5 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">4</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Prof</span>
+                </button>
+                <button type="button" onclick="setScore(5, 5)" class="btn-score-5 flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-200 hover:bg-neutral-50 transition font-black text-sm text-black">
+                  <span class="text-xl">5</span>
+                  <span class="text-[9px] uppercase tracking-wide font-black">Adv</span>
+                </button>
+              </div>
+              <input type="hidden" id="score-val-5" required name="qa">
+              <!-- Descriptor Preview Box -->
+              <div id="desc-box-5" class="hidden text-xs bg-neutral-50 text-black rounded-lg p-3.5 border-l-4 border-green-dlsz leading-relaxed mt-3 font-semibold"></div>
+            </div>
+
+            <!-- Panel Feedback Card -->
+            <div class="bg-white rounded-xl shadow-md border-2 border-black p-6 space-y-3">
+              <h4 class="font-black text-black text-sm tracking-wider uppercase border-b-2 border-black pb-2 flex items-center gap-2">
+                <i data-lucide="message-square-plus" class="w-5 h-5 text-green-dlsz"></i>
+                Constructive Panel Feedback
+              </h4>
+              <textarea id="critique-comments" rows="4" placeholder="Input constructive critiques, theoretical scope adjustments, or requested document edits..." class="w-full rounded-lg border-2 border-black p-3.5 text-sm font-bold text-black focus:outline-none focus:ring-2 focus:ring-green-dlsz transition resize-y"></textarea>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+              <button type="submit" class="w-full sm:w-auto flex-grow bg-green-dlsz hover:bg-green-dlsz-dark text-white font-black py-4 px-6 rounded-lg text-sm uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2 border-b-4 border-black">
+                <i data-lucide="send" class="w-4.5 h-4.5"></i>
+                <span>Submit Score sheet</span>
+              </button>
+              <button type="button" onclick="clearEvaluationForm()" class="w-full sm:w-auto bg-black hover:bg-neutral-900 text-white font-black py-4 px-6 rounded-lg text-xs uppercase tracking-wider transition flex items-center justify-center gap-2">
+                <i data-lucide="rotate-ccw" class="w-4 h-4 text-yellow-300"></i>
+                <span>Reset Draft</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- TAB 2: SAVED RECORDS -->
+    <section id="tab-records" class="space-y-6 hidden">
+      <div class="bg-white rounded-xl shadow-md border-2 border-black p-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-black pb-4 mb-5">
+          <div>
+            <h2 class="text-xl font-black text-black uppercase">Archived Scores</h2>
+            <p class="text-xs text-neutral-700 font-bold">Manage previous submissions compiled locally on this device.</p>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="exportToCSV()" class="flex-grow sm:flex-grow-0 bg-green-dlsz hover:bg-green-dlsz-dark text-white text-xs font-black uppercase px-4 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 border-2 border-black">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Export CSV</span>
+            </button>
+            <button onclick="clearAllLocalRecords()" class="flex-grow sm:flex-grow-0 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-black uppercase px-4 py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 border border-red-300">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              <span>Purge Local DB</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search / Filter Area -->
+        <div class="flex items-center bg-neutral-100 border-2 border-black px-3.5 py-2.5 rounded-lg max-w-sm mb-5">
+          <i data-lucide="search" class="w-4 h-4 text-black mr-2"></i>
+          <input type="text" id="record-search" oninput="filterRecords()" placeholder="Search Section, Group, or Title..." class="bg-transparent text-xs font-bold text-black w-full focus:outline-none placeholder-neutral-500">
+        </div>
+
+        <!-- Records Table container -->
+        <div class="overflow-x-auto rounded-lg border-2 border-black">
+          <table class="min-w-full divide-y divide-black text-xs font-bold">
+            <thead class="bg-black text-[10px] font-black uppercase tracking-wider text-white text-left">
+              <tr>
+                <th class="px-4 py-3 border-r border-neutral-800">Group Metadata</th>
+                <th class="px-4 py-3 border-r border-neutral-800">Research Title</th>
+                <th class="px-4 py-3 text-center border-r border-neutral-800">Aggregate</th>
+                <th class="px-4 py-3 border-r border-neutral-800">Panelist</th>
+                <th class="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="records-table-body" class="divide-y divide-neutral-200 bg-white">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+          <div id="no-records-state" class="text-center py-12 text-black font-bold space-y-2 hidden">
+            <i data-lucide="inbox" class="w-10 h-10 mx-auto text-green-dlsz"></i>
+            <p class="text-sm">No recorded defense logs found.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SYSTEM SETUP & INTEGRATION -->
+    <section id="tab-setup" class="space-y-6 hidden">
+      <div class="bg-white rounded-xl shadow-md border-2 border-black p-6 space-y-6">
+        <div>
+          <h2 class="text-xl font-black text-black uppercase">Google Sheet & Email Sync</h2>
+          <p class="text-xs text-neutral-700 font-bold">Securely route and archive evaluations inside your designated spreadsheet database.</p>
+        </div>
+
+        <!-- Connection Settings Box -->
+        <div class="bg-neutral-50 rounded-xl p-5 border-2 border-black space-y-4 max-w-2xl">
+          <h3 class="font-black text-sm text-black uppercase flex items-center gap-2">
+            <i data-lucide="link" class="w-5 h-5 text-green-dlsz"></i>
+            Active Spreadsheet Credentials
+          </h3>
+          <div class="space-y-1.5">
+            <label class="block text-xs font-black text-black uppercase">Linked Target Spreadsheet:</label>
+            <a href="https://docs.google.com/spreadsheets/d/1pdQSXra4FwOJSHLzX9uOKzW-Hql86c7htQqkbJXxo10/edit?usp=sharing" target="_blank" class="text-green-700 hover:underline font-black text-xs break-all block py-1">
+              https://docs.google.com/spreadsheets/d/1pdQSXra4FwOJSHLzX9uOKzW-Hql86c7htQqkbJXxo10/edit?usp=sharing
+            </a>
+          </div>
+          <div class="space-y-2">
+            <label class="block text-xs font-black text-black uppercase">Deployed Web App URL (GAS End-point):</label>
+            <input type="url" id="settings-gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full rounded-lg border-2 border-black p-2.5 text-xs font-bold text-black focus:outline-none focus:ring-2 focus:ring-green-dlsz transition">
+            <p class="text-[10px] text-neutral-600 font-bold leading-relaxed">Paste the Google Apps Script Web App URL here after deploying the companion backend script code below.</p>
+          </div>
+          <button onclick="saveSettings()" class="bg-green-dlsz hover:bg-green-dlsz-dark text-white font-black py-2.5 px-5 rounded-lg text-xs uppercase tracking-wider transition border border-black">
+            Save Web App Link
+          </button>
+        </div>
+
+        <!-- Step by Step Setup Code & Guide -->
+        <div class="space-y-4">
+          <h3 class="font-black text-sm text-black uppercase border-b-2 border-black pb-1.5">Setup Guide (3 Steps)</h3>
+          
+          <div class="border-2 border-neutral-200 rounded-xl p-5 bg-white space-y-4">
+            <div class="flex items-start gap-3">
+              <span class="bg-black text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-black flex-shrink-0">1</span>
+              <div>
+                <h4 class="font-black text-sm text-black uppercase">Open Google Sheets Extensions</h4>
+                <p class="text-xs text-neutral-800 leading-relaxed mt-0.5">
+                  Visit your spreadsheet <a href="https://docs.google.com/spreadsheets/d/1pdQSXra4FwOJSHLzX9uOKzW-Hql86c7htQqkbJXxo10/edit?usp=sharing" target="_blank" class="text-green-700 hover:underline font-bold">1pdQSXra4FwOJSHLzX9uOKzW-Hql86c7htQqkbJXxo10</a>. In the top toolbar, go to <strong>Extensions &gt; Apps Script</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <span class="bg-black text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-black flex-shrink-0">2</span>
+              <div>
+                <h4 class="font-black text-sm text-black uppercase">Paste & Deploy Script</h4>
+                <p class="text-xs text-neutral-800 leading-relaxed mt-0.5">
+                  Replace any default script code with the companion script provided. Save, and click <strong>Deploy &gt; New Deployment</strong>. Choose <strong>Web App</strong>, change "Who has access" to <strong>Anyone</strong>, and click Deploy.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <span class="bg-black text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-black flex-shrink-0">3</span>
+              <div>
+                <h4 class="font-black text-sm text-black uppercase">Paste Deployment URL Here</h4>
+                <p class="text-xs text-neutral-800 leading-relaxed mt-0.5">
+                  Copy the generated Web App URL and paste it into the "Deployed Web App URL" input field inside this Setup Tab above.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PRINT-ONLY RECEIPT SCREEN -->
+  <section class="hidden print-only bg-white p-8 max-w-3xl mx-auto text-black text-sm" id="print-receipt-section">
+    <div class="border-b-4 border-double border-black pb-4 mb-6 text-center">
+      <h2 class="text-2xl font-black uppercase">DE LA SALLE SANTIAGO ZOBEL</h2>
+      <p class="text-xs font-bold uppercase tracking-widest text-neutral-600">Br. Rafael Donato FSC Night High School</p>
+      <p class="text-xs font-bold">Ayala Alabang Village, Muntinlupa City, 1780</p>
+      <h3 class="text-sm font-bold mt-3 uppercase border-2 border-black px-4 py-1.5 inline-block">PROPOSAL DEFENSE ASSESSMENT LOG</h3>
+    </div>
+
+    <!-- Panel Metadata -->
+    <div class="grid grid-cols-2 gap-4 mb-6 text-xs bg-neutral-50 p-4 rounded border-2 border-black">
+      <div>
+        <p class="font-bold text-neutral-600">EVALUATOR/PANELIST:</p>
+        <p id="p-print-panelist" class="font-black text-sm text-black"></p>
+        <p id="p-print-email" class="text-neutral-700 font-bold"></p>
+      </div>
+      <div>
+        <p class="font-bold text-neutral-600">CLASS GROUP:</p>
+        <p id="p-print-group" class="font-black text-sm text-black"></p>
+        <p class="text-neutral-700 font-bold">Adviser: Gerald Gamboa</p>
+      </div>
+      <div class="col-span-2 pt-2 border-t border-black">
+        <p class="font-bold text-neutral-600">RESEARCH PAPER TITLE:</p>
+        <p id="p-print-title" class="italic font-bold text-xs text-black"></p>
+      </div>
+    </div>
+
+    <!-- Scores Matrix -->
+    <table class="w-full border-collapse border-2 border-black text-xs mb-6 font-bold">
+      <thead>
+        <tr class="bg-neutral-100 text-left border-b-2 border-black text-black">
+          <th class="border border-black p-2 font-black">Assessment Dimensions</th>
+          <th class="border border-black p-2 text-center font-black" style="width: 15%">Score</th>
+        </tr>
+      </thead>
+      <tbody id="print-table-body" class="text-black">
+        <!-- Filled dynamically -->
+      </tbody>
+      <tfoot>
+        <tr class="font-black bg-neutral-50 text-sm border-t-2 border-black">
+          <td class="border border-black p-3 text-right uppercase font-black">Total Evaluated Score:</td>
+          <td class="border border-black p-3 text-center text-lg font-black text-black" id="p-print-total"></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <!-- Qualitative Block -->
+    <div class="border-2 border-black p-4 rounded mb-8 bg-neutral-50">
+      <h4 class="font-black text-xs uppercase mb-2 border-b-2 border-black pb-1">Constructive Critiques & Feedback</h4>
+      <p id="p-print-feedback" class="italic text-xs text-black min-h-[80px] leading-relaxed font-bold"></p>
+    </div>
+
+    <!-- Signs -->
+    <div class="grid grid-cols-2 gap-8 pt-8 text-center text-xs mt-12">
+      <div class="space-y-12">
+        <div class="border-b border-black mx-auto w-3/4"></div>
+        <p class="font-black uppercase text-black" id="p-print-sign-panelist"></p>
+        <p class="text-[10px] text-neutral-600 font-bold">Panel Evaluator Signature</p>
+      </div>
+      <div class="space-y-12">
+        <div class="border-b border-black mx-auto w-3/4"></div>
+        <p class="font-black uppercase text-black">Gerald Gamboa</p>
+        <p class="text-[10px] text-neutral-600 font-bold">Practical Research 2 Adviser</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t-2 border-black py-6 text-center text-xs text-black font-bold no-print">
+    <p>© 2026 De La Salle Santiago Zobel School. SHS Research, Service Learning & Immersion Unit.</p>
+    <p class="mt-1 text-neutral-600 text-[11px]">Designed to dynamically evaluate night high school research outcomes under adviser coordination.</p>
+  </footer>
+
+  <!-- CORE JAVASCRIPT LOGIC -->
+  <script>
+    // Rubric Descriptors database from the PDF Rubric Sheet
+    const rubricDatabase = {
+      1: {
+        name: "Understanding of the Research Topic",
+        1: "Minimal understanding of the study. Members are generally unable to explain the research accurately.",
+        2: "Limited understanding of the study. Only a few members can explain important concepts accurately.",
+        3: "Adequate understanding of the study. Most members explain the key concepts correctly, although some responses lack depth or consistency.",
+        4: "Clear understanding of the study and explain the major components accurately with only minor lapses.",
+        5: "Comprehensive understanding of the study and consistently explain the research problem, objectives, framework, methodology, and significance accurately while building on one another's responses."
+      },
+      2: {
+        name: "Presentation & Delivery",
+        1: "The presentation is disorganized, with minimal collaboration and ineffective delivery.",
+        2: "The presentation lacks coordination. Unequal participation and inconsistent delivery reduce audience engagement.",
+        3: "The group presents adequately, although coordination, confidence, or participation among members is inconsistent.",
+        4: "The group presents clearly with good coordination. Most members communicate confidently and maintain audience engagement.",
+        5: "The group delivers a well-coordinated, confident, and professional presentation. Transitions are seamless, and all members actively engage the audience."
+      },
+      3: {
+        name: "Content Accuracy & Organization",
+        1: "The presentation contains major inaccuracies, significant omissions, and poor organization.",
+        2: "Several inaccuracies, omissions, or organizational issues reduce clarity.",
+        3: "Information is generally accurate, but some sections lack sufficient detail or logical organization.",
+        4: "Information is accurate and organized with only minor inaccuracies or omissions.",
+        5: "Information presented by the group is accurate, complete, well-organized, and logically connected throughout the defense."
+      },
+      4: {
+        name: "Use of Evidence and Research Support",
+        1: "Claims are unsupported or supported with irrelevant evidence.",
+        2: "Limited or weak evidence supports the group's claims.",
+        3: "Claims are supported by some evidence, although relevance or integration is inconsistent.",
+        4: "Most claims are supported by appropriate literature and evidence.",
+        5: "All major claims are consistently supported by relevant literature, theories, data, and examples integrated effectively by the group."
+      },
+      5: {
+        name: "Ability to Respond to Questions",
+        1: "The group is unable to answer most questions accurately or provides unsupported responses.",
+        2: "Only some members respond accurately. Explanations are incomplete or unclear.",
+        3: "The group answers most questions satisfactorily, although explanations sometimes lack depth or supporting evidence.",
+        4: "Group members answer most questions accurately and provide logical explanations supported by appropriate research concepts.",
+        5: "Group members respond accurately, confidently, and collaboratively. Responses are well-justified using related literature, research findings, and sound reasoning, demonstrating collective mastery."
+      }
+    };
+
+    // App State
+    let currentTab = 'form';
+    let selectedScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let savedRecords = [];
+
+    // On Load Initializations
+    window.onload = function() {
+      lucide.createIcons();
+      loadSettings();
+      loadSavedRecords();
+      calculateRealtimeScores();
+    };
+
+    // Score button interaction selector
+    function setScore(criterionIndex, score) {
+      selectedScores[criterionIndex] = score;
+      document.getElementById(`score-val-${criterionIndex}`).value = score;
+      
+      // Update Button Styles inside the specific criterion block
+      const buttons = document.querySelectorAll(`.btn-score-${criterionIndex}`);
+      buttons.forEach((btn, index) => {
+        const btnScore = index + 1;
+        if (btnScore === score) {
+          // Stark White on Black theme for selected answers
+          btn.className = `btn-score-${criterionIndex} flex flex-col items-center justify-center py-3 rounded-lg border-2 border-black bg-black text-white transition font-black text-sm shadow-md scale-102`;
+        } else {
+          // Standard high-contrast white background with dark border
+          btn.className = `btn-score-${criterionIndex} flex flex-col items-center justify-center py-3 rounded-lg border-2 border-neutral-300 hover:bg-neutral-100 bg-white text-black transition font-bold text-sm`;
+        }
+      });
+
+      // Update descriptor preview text box below selection
+      const descBox = document.getElementById(`desc-box-${criterionIndex}`);
+      descBox.innerHTML = `<span class="font-black text-black uppercase text-[10px] block mb-1">Rubric Criteria Description:</span> ${rubricDatabase[criterionIndex][score]}`;
+      descBox.classList.remove('hidden');
+
+      calculateRealtimeScores();
+    }
+
+    // Dynamic Scoring Engine calculations
+    function calculateRealtimeScores() {
+      let sum = 0;
+      let filledCount = 0;
+      for (let i = 1; i <= 5; i++) {
+        if (selectedScores[i] > 0) {
+          sum += selectedScores[i];
+          filledCount++;
+        }
+      }
+
+      // Update counters
+      document.getElementById('composite-score-badge').innerText = sum;
+      document.getElementById('rubric-progress').innerText = `${filledCount}/5 Fields Filled`;
+      
+      // Update Progress Bar
+      const percent = (filledCount / 5) * 100;
+      document.getElementById('rubric-progress-bar').style.width = `${percent}%`;
+
+      // Update verbal visual evaluation interpretations
+      const verbalText = document.getElementById('grade-verbal-interpretation');
+      if (filledCount === 0) {
+        verbalText.innerText = "Pending Assessment Input";
+        verbalText.className = "font-black text-xs text-neutral-400 mt-1 uppercase";
+      } else {
+        if (sum >= 21) {
+          verbalText.innerText = "ADVANCED CRITERION LEVEL";
+          verbalText.className = "font-black text-sm text-green-400 mt-1";
+        } else if (sum >= 16) {
+          verbalText.innerText = "PROFICIENT LEVEL";
+          verbalText.className = "font-black text-sm text-lime-400 mt-1";
+        } else if (sum >= 11) {
+          verbalText.innerText = "APPROACHING PROFICIENCY";
+          verbalText.className = "font-black text-sm text-yellow-300 mt-1";
+        } else if (sum >= 6) {
+          verbalText.innerText = "DEVELOPING STAGE";
+          verbalText.className = "font-black text-sm text-orange-400 mt-1";
+        } else {
+          verbalText.innerText = "BEGINNING BENCHMARK";
+          verbalText.className = "font-black text-sm text-red-500 mt-1";
+        }
+      }
+    }
+
+    // Settings storage loader
+    function loadSettings() {
+      const gasUrl = localStorage.getItem('dlsz_gas_url');
+      if (gasUrl) {
+        document.getElementById('settings-gas-url').value = gasUrl;
+      }
+    }
+
+    function saveSettings() {
+      const urlInput = document.getElementById('settings-gas-url').value.trim();
+      localStorage.setItem('dlsz_gas_url', urlInput);
+      showToast('Spreadsheet integration successfully established', 'success');
+    }
+
+    // Navigation state manager
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.getElementById('tab-form').classList.add('hidden');
+      document.getElementById('tab-records').classList.add('hidden');
+      document.getElementById('tab-setup').classList.add('hidden');
+      
+      // Remove states from menu controls
+      document.getElementById('btn-show-form').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-white hover:bg-green-dlsz-dark transition flex items-center gap-1.5 border border-white/20";
+      document.getElementById('btn-show-records').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-white hover:bg-green-dlsz-dark transition flex items-center gap-1.5 relative border border-white/20";
+      
+      if (tabId === 'form') {
+        document.getElementById('tab-form').classList.remove('hidden');
+        document.getElementById('btn-show-form').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-black text-white hover:bg-neutral-900 shadow-md transition flex items-center gap-1.5 border border-neutral-700";
+      } else if (tabId === 'records') {
+        document.getElementById('tab-records').classList.remove('hidden');
+        document.getElementById('btn-show-records').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-black text-white hover:bg-neutral-900 shadow-md transition flex items-center gap-1.5 relative border border-neutral-700";
+        renderRecords();
+      } else if (tabId === 'setup') {
+        document.getElementById('tab-setup').classList.remove('hidden');
+      }
+    }
+
+    // Submitting dynamic records handler
+    function handleFormSubmission(event) {
+      event.preventDefault();
+
+      // Validate scores
+      for (let i = 1; i <= 5; i++) {
+        if (selectedScores[i] === 0) {
+          showToast(`Please rate Criterion ${i} before submitting`, 'error');
+          document.getElementById(`card-crit-${i}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+      }
+
+      const panelistName = document.getElementById('panelist-name').value;
+      const panelistEmail = document.getElementById('panelist-email').value;
+      const gradeSection = document.getElementById('grade-section').value;
+      const groupNum = document.getElementById('group-number').value;
+      const title = document.getElementById('research-title').value;
+      const comments = document.getElementById('critique-comments').value || "No detailed notes provided.";
+
+      // Pack submission
+      const record = {
+        id: 'rec_' + Date.now(),
+        timestamp: new Date().toLocaleString(),
+        panelistName,
+        panelistEmail,
+        gradeSection,
+        groupNum,
+        title,
+        scores: { ...selectedScores },
+        totalScore: Object.values(selectedScores).reduce((a,b)=>a+b, 0),
+        comments
+      };
+
+      // 1. Commit to LocalStorage
+      savedRecords.unshift(record);
+      localStorage.setItem('dlsz_evaluation_records', JSON.stringify(savedRecords));
+      updateRecordBadge();
+
+      // 2. Dispatch to GAS Back-end WebApp (if linked)
+      const endpoint = localStorage.getItem('dlsz_gas_url');
+      if (endpoint) {
+        showToast('Transmitting scored data to Google Sheets...', 'info');
+        
+        // Form payload mapping to the Google Sheets schema
+        const payload = {
+          email: panelistEmail,
+          panelistName: panelistName,
+          gradeSection: gradeSection,
+          groupNum: groupNum,
+          researchTitle: title,
+          scores: [
+            selectedScores[1],
+            selectedScores[2],
+            selectedScores[3],
+            selectedScores[4],
+            selectedScores[5]
+          ],
+          totalScore: record.totalScore,
+          comments: comments
+        };
+
+        fetch(endpoint, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        })
+        .then(() => {
+          showToast('Data Synced directly to Spreadsheet Form Responses!', 'success');
+        })
+        .catch(err => {
+          console.error(err);
+          showToast('Failed to connect to spreadsheet. Saved to local history instead.', 'error');
+        });
+      } else {
+        showToast('Evaluation logged to device. Set up Apps Script to sync directly!', 'success');
+      }
+
+      promptReceipt(record);
+    }
+
+    // Modal popup helper to request dynamic instant receipts
+    function promptReceipt(record) {
+      const container = document.getElementById('toast-container');
+      const dialog = document.createElement('div');
+      dialog.className = "bg-black text-white p-5 rounded-xl shadow-2xl border-2 border-green-dlsz space-y-4 animate-fade-in";
+      dialog.innerHTML = `
+        <div class="flex items-start gap-3">
+          <div class="bg-green-dlsz p-2 rounded-lg text-white">
+            <i data-lucide="check-circle" class="w-5 h-5 text-yellow-300"></i>
+          </div>
+          <div>
+            <h4 class="font-black text-sm uppercase">Assessment Logged</h4>
+            <p class="text-[11px] text-neutral-300 mt-1 font-bold">Successfully captured for ${record.groupNum} (${record.gradeSection}) with a score of ${record.totalScore}/25.</p>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="printRecordById('${record.id}')" class="bg-green-dlsz hover:bg-green-dlsz-dark text-white text-[10px] font-black uppercase py-2 px-3.5 rounded-lg flex-grow flex items-center justify-center gap-1.5 border border-black shadow">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Print Report</span>
+          </button>
+          <button onclick="closeReceiptPrompt(this)" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white text-[10px] font-black uppercase py-2 px-3 rounded-lg border border-neutral-700">
+            Dismiss
+          </button>
+        </div>
+      `;
+      container.appendChild(dialog);
+      lucide.createIcons({ scope: dialog });
+    }
+
+    function closeReceiptPrompt(button) {
+      button.closest('.animate-fade-in').remove();
+    }
+
+    // Print Receipt formatting Engine
+    function printRecordById(id) {
+      const rec = savedRecords.find(r => r.id === id);
+      if (!rec) return;
+
+      document.getElementById('p-print-panelist').innerText = rec.panelistName;
+      document.getElementById('p-print-sign-panelist').innerText = rec.panelistName;
+      document.getElementById('p-print-email').innerText = rec.panelistEmail;
+      document.getElementById('p-print-group').innerText = `${rec.gradeSection} - ${rec.groupNum}`;
+      document.getElementById('p-print-title').innerText = rec.title;
+      document.getElementById('p-print-total').innerText = `${rec.totalScore} / 25`;
+      document.getElementById('p-print-feedback').innerText = rec.comments;
+
+      const tbody = document.getElementById('print-table-body');
+      tbody.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-black text-black";
+        tr.innerHTML = `
+          <td class="p-3.5 border-r border-black">
+            <p class="font-black text-xs text-black">${rubricDatabase[i].name}</p>
+            <p class="text-[10px] text-neutral-800 italic mt-1 font-semibold">${rubricDatabase[i][rec.scores[i]]}</p>
+          </td>
+          <td class="p-3.5 text-center font-black text-sm text-black">${rec.scores[i]} / 5</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      window.print();
+    }
+
+    // Local DB management tools
+    function loadSavedRecords() {
+      const records = localStorage.getItem('dlsz_evaluation_records');
+      if (records) {
+        savedRecords = JSON.parse(records);
+      } else {
+        savedRecords = [];
+      }
+      updateRecordBadge();
+    }
+
+    function updateRecordBadge() {
+      const badge = document.getElementById('record-count-badge');
+      if (savedRecords.length > 0) {
+        badge.innerText = savedRecords.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    function renderRecords(dataToRender = savedRecords) {
+      const tbody = document.getElementById('records-table-body');
+      const emptyState = document.getElementById('no-records-state');
+      tbody.innerHTML = '';
+
+      if (dataToRender.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      dataToRender.forEach(rec => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-neutral-50 border-b border-black text-black";
+        tr.innerHTML = `
+          <td class="px-4 py-3.5 border-r border-neutral-200">
+            <p class="font-black text-black text-xs">${rec.groupNum}</p>
+            <p class="text-[10px] text-neutral-700 font-bold mt-0.5">${rec.gradeSection}</p>
+          </td>
+          <td class="px-4 py-3.5 max-w-xs sm:max-w-md truncate border-r border-neutral-200">
+            <p class="text-xs text-black italic font-bold" title="${rec.title}">${rec.title}</p>
+            <p class="text-[9px] text-neutral-600 mt-1">Logged: ${rec.timestamp}</p>
+          </td>
+          <td class="px-4 py-3.5 text-center border-r border-neutral-200">
+            <span class="bg-black text-yellow-300 px-2.5 py-1 rounded text-xs font-black border border-neutral-800">${rec.totalScore}/25</span>
+          </td>
+          <td class="px-4 py-3.5 border-r border-neutral-200">
+            <p class="text-xs font-black text-black">${rec.panelistName}</p>
+            <p class="text-[9px] text-neutral-600 font-bold">${rec.panelistEmail}</p>
+          </td>
+          <td class="px-4 py-3.5 text-right">
+            <div class="inline-flex gap-2.5">
+              <button onclick="printRecordById('${rec.id}')" class="p-1 text-black hover:text-green-dlsz transition" title="Print Log">
+                <i data-lucide="printer" class="w-4.5 h-4.5"></i>
+              </button>
+              <button onclick="deleteRecordById('${rec.id}')" class="p-1 text-red-500 hover:text-red-700 transition" title="Delete record">
+                <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      lucide.createIcons({ scope: tbody });
+    }
+
+    function filterRecords() {
+      const q = document.getElementById('record-search').value.toLowerCase().trim();
+      const filtered = savedRecords.filter(r => 
+        r.groupNum.toLowerCase().includes(q) || 
+        r.gradeSection.toLowerCase().includes(q) || 
+        r.title.toLowerCase().includes(q) ||
+        r.panelistName.toLowerCase().includes(q)
+      );
+      renderRecords(filtered);
+    }
+
+    function deleteRecordById(id) {
+      if (!confirm("Are you sure you want to remove this record?")) return;
+      savedRecords = savedRecords.filter(r => r.id !== id);
+      localStorage.setItem('dlsz_evaluation_records', JSON.stringify(savedRecords));
+      updateRecordBadge();
+      renderRecords();
+      showToast('Record deleted successfully', 'success');
+    }
+
+    function clearAllLocalRecords() {
+      if (!confirm("CRITICAL WARNING: This will permanently delete all logs of evaluations from this device. Proceed?")) return;
+      savedRecords = [];
+      localStorage.removeItem('dlsz_evaluation_records');
+      updateRecordBadge();
+      renderRecords();
+      showToast('Local logs purged', 'success');
+    }
+
+    // CSV Engine Exporter
+    function exportToCSV() {
+      if (savedRecords.length === 0) {
+        showToast('No records available to export', 'error');
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Timestamp,Panelist,Email,GradeSection,GroupIndex,ResearchTitle,Crit1_Understanding,Crit2_Presentation,Crit3_Content,Crit4_Evidence,Crit5_QnA,TotalScore,FeedbackComments\n";
+
+      savedRecords.forEach(r => {
+        const row = [
+          `"${r.timestamp}"`,
+          `"${r.panelistName.replace(/"/g, '""')}"`,
+          `"${r.panelistEmail}"`,
+          `"${r.gradeSection}"`,
+          `"${r.groupNum}"`,
+          `"${r.title.replace(/"/g, '""')}"`,
+          r.scores[1],
+          r.scores[2],
+          r.scores[3],
+          r.scores[4],
+          r.scores[5],
+          r.totalScore,
+          `"${r.comments.replace(/"/g, '""')}"`
+        ].join(",");
+        csvContent += row + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `DLSZ_PR2_Defense_Logs_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Reset Form layout helper
+    function clearEvaluationForm() {
+      if (!confirm("Reset all field inputs back to empty?")) return;
+      document.getElementById('evaluation-form').reset();
+      selectedScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      
+      for (let i = 1; i <= 5; i++) {
+        const buttons = document.querySelectorAll(`.btn-score-${i}`);
+        buttons.forEach(btn => {
+          btn.className = `btn-score-${i} flex flex-col items-center justify-center py-3 rounded-lg border border-neutral-300 hover:bg-neutral-100 bg-white text-black transition font-bold text-sm`;
+        });
+        document.getElementById(`score-val-${i}`).value = '';
+        document.getElementById(`desc-box-${i}`).classList.add('hidden');
+      }
+      
+      calculateRealtimeScores();
+      showToast('Form fields cleared', 'info');
+    }
+
+    // Elegant Toast Alert helper
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `flex items-center gap-3 p-4 rounded-xl shadow-lg border-2 text-xs font-black uppercase transform translate-y-2 transition-all duration-300 bg-white text-black border-black`;
+      
+      let icon = '<i data-lucide="info" class="w-4 h-4 text-blue-500"></i>';
+      if (type === 'success') {
+        icon = '<i data-lucide="check-circle-2" class="w-4 h-4 text-green-600"></i>';
+      } else if (type === 'error') {
+        icon = '<i data-lucide="alert-triangle" class="w-4 h-4 text-red-500"></i>';
+      }
+
+      toast.innerHTML = `
+        ${icon}
+        <span class="flex-grow">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-neutral-400 hover:text-black">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      `;
+
+      container.appendChild(toast);
+      lucide.createIcons({ scope: toast });
+
+      setTimeout(() => {
+        toast.className += " opacity-0 pointer-events-none -translate-y-2";
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
